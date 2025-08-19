@@ -1,8 +1,10 @@
+// src/components/Layout/Sidebar.tsx
 import React from 'react';
 import { 
   Home, BarChart3, Target, Users, CheckSquare, MapPin, Bell, FileText, Megaphone,
-  Zap, Activity, Factory, Shield, Settings, GitBranch
+  Zap, Activity, Factory, Shield, Settings, GitBranch, LogOut   // ✅ added LogOut
 } from 'lucide-react';
+import { Link } from 'react-router-dom'; // ✅ added
 
 interface SidebarProps {
   activePortal: 'partner' | 'admin';
@@ -100,7 +102,16 @@ export default function Sidebar({ activePortal, activeSection, onSectionChange, 
 
       {/* Footer */}
       <div className="p-4 border-t border-gray-200">
-        <div className="text-xs text-gray-500">
+        {/* ✅ New logout button */}
+        <Link
+          to="/logout"
+          className="flex items-center gap-2 px-3 py-2 rounded-lg text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900"
+        >
+          <LogOut className="h-4 w-4" />
+          <span>Sign out</span>
+        </Link>
+
+        <div className="mt-3 text-xs text-gray-500">
           SynkCRM v2.1.0
         </div>
       </div>
