@@ -1,3 +1,4 @@
+// SYNCCRM/src/App.tsx
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
@@ -5,6 +6,7 @@ import { AuthProvider, useAuth } from './contexts/AuthContext';
 import LoginPage from './components/Auth/LoginPage';
 import PartnerPortal from './components/PartnerPortal/PartnerPortal';
 import AdminPortal from './components/AdminPortal/AdminPortal';
+import LogoutPage from './components/Auth/LogoutPage'; // ✅ new import
 
 function AppContent() {
   const { user, portal, isLoading } = useAuth();
@@ -26,11 +28,12 @@ function AppContent() {
 
   return (
     <Routes>
+      {/* ✅ logout route added */}
+      <Route path="/logout" element={<LogoutPage />} />
+
       <Route 
         path="/*" 
-        element={
-          portal === 'admin' ? <AdminPortal /> : <PartnerPortal />
-        } 
+        element={portal === 'admin' ? <AdminPortal /> : <PartnerPortal />} 
       />
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
