@@ -2,20 +2,23 @@ import React, { useState } from 'react';
 import { Search, Plus, Bell, ChevronDown, LogOut, User, Settings } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 import { notifications } from '../../data/sampleData';
+import { useNavigate } from 'react-router-dom';
 
 interface TopBarProps {
   onNewOpportunity?: () => void;
 }
 
 export default function TopBar({ onNewOpportunity }: TopBarProps) {
-  const { user, logout, portal } = useAuth();
+  const { user, portal } = useAuth();
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [showNotifications, setShowNotifications] = useState(false);
-  
+  const navigate = useNavigate();
+
   const unreadCount = notifications.filter(n => !n.read).length;
 
   const handleLogout = () => {
-    logout();
+    setShowUserMenu(false);
+    navigate('/logout'); // goes to LogoutPage which calls context.logout() and redirects to /login
   };
 
   return (
@@ -36,11 +39,13 @@ export default function TopBar({ onNewOpportunity }: TopBarProps) {
         {/* Actions */}
         <div className="flex items-center space-x-4 ml-6">
           {/* Portal Badge */}
-          <div className={`px-3 py-1 rounded-full text-xs font-medium ${
-            portal === 'admin' 
-              ? 'bg-purple-100 text-purple-800' 
-              : 'bg-blue-100 text-blue-800'
-          }`}>
+          <div
+            className={`px-3 py-1 rounded-full text-xs font-medium ${
+              portal === 'admin'
+                ? 'bg-purple-100 text-purple-800'
+                : 'bg-blue-100 text-blue-800'
+            }`}
+          >
             {portal === 'admin' ? 'Admin Portal' : 'Partner Portal'}
           </div>
 
@@ -117,7 +122,10 @@ export default function TopBar({ onNewOpportunity }: TopBarProps) {
               className="flex items-center space-x-3 p-2 rounded-lg hover:bg-gray-50 transition-colors"
             >
               <img
-                src={user?.avatar || 'https://images.pexels.com/photos/2379005/pexels-photo-2379005.jpeg?auto=compress&cs=tinysrgb&w=150'}
+                src={
+                  user?.avatar ||
+                  'https://images.pexels.com/photos/2379005/pexels-photo-2379005.jpeg?auto=compress&cs=tinysrgb&w=150'
+                }
                 alt={user?.firstName}
                 className="h-8 w-8 rounded-full"
               />
@@ -125,9 +133,7 @@ export default function TopBar({ onNewOpportunity }: TopBarProps) {
                 <div className="text-sm font-medium text-gray-900">
                   {user?.firstName} {user?.lastName}
                 </div>
-                <div className="text-xs text-gray-500 capitalize">
-                  {user?.role}
-                </div>
+                <div className="text-xs text-gray-500 capitalize">{user?.role}</div>
               </div>
               <ChevronDown className="h-4 w-4 text-gray-400" />
             </button>
@@ -144,7 +150,7 @@ export default function TopBar({ onNewOpportunity }: TopBarProps) {
                     Preferences
                   </button>
                   <div className="border-t border-gray-100"></div>
-                  <button 
+                  <button
                     onClick={handleLogout}
                     className="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                   >
