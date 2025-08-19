@@ -1,8 +1,8 @@
 // src/components/Layout/FuturisticTopBar.tsx
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { 
-  Search, Plus, Bell, ChevronDown, LogOut, User, Settings, 
+import {
+  Search, Plus, Bell, ChevronDown, LogOut, User, Settings,
   Zap, Brain, Globe, Shield, Command, Sparkles, Eye
 } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
@@ -19,36 +19,34 @@ export default function FuturisticTopBar({ onNewOpportunity }: TopBarProps) {
   const [showNotifications, setShowNotifications] = useState(false);
   const [showAIAssistant, setShowAIAssistant] = useState(false);
   const navigate = useNavigate();
-  
+
   const unreadCount = notifications.filter(n => !n.read).length;
 
   const handleLogout = () => {
     setShowUserMenu(false);
-    // Use the /logout route which calls context.logout() and redirects to /login
-    navigate('/logout');
+    navigate('/logout'); // LogoutPage clears context + redirects to /login
   };
 
   return (
-    <motion.div 
-      // ⛏️ removed "overflow-hidden" so the dropdown isn't clipped
+    <motion.div
       className="bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 border-b border-slate-700/50 px-6 py-4 relative"
       initial={{ y: -100, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
       transition={{ duration: 0.5 }}
     >
-      {/* Animated Background */}
+      {/* Background */}
       <div className="absolute inset-0 bg-gradient-to-r from-blue-500/5 via-purple-500/5 to-pink-500/5"></div>
       <div className="absolute bottom-0 left-0 w-full h-1 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500"></div>
-      
+
       <div className="flex items-center justify-between relative z-10">
-        {/* AI-Powered Search */}
+        {/* AI Search */}
         <div className="flex-1 max-w-2xl">
           <div className="relative group">
             <div className="absolute inset-0 bg-gradient-to-r from-blue-500/20 to-purple-500/20 rounded-xl blur opacity-0 group-hover:opacity-100 transition-opacity"></div>
             <div className="relative flex items-center">
               <div className="absolute left-4 flex items-center space-x-2">
                 <Brain className="h-4 w-4 text-blue-400" />
-                <div className="w-px h-4 bg-slate-600"></div>
+                <div className="w-px h-4 bg-slate-600" />
               </div>
               <input
                 type="text"
@@ -65,13 +63,13 @@ export default function FuturisticTopBar({ onNewOpportunity }: TopBarProps) {
           </div>
         </div>
 
-        {/* Actions */}
+        {/* Right actions */}
         <div className="flex items-center space-x-4 ml-6">
-          {/* Portal Badge */}
-          <motion.div 
+          {/* Portal badge */}
+          <motion.div
             className={`px-4 py-2 rounded-xl text-sm font-medium border backdrop-blur-sm ${
-              portal === 'admin' 
-                ? 'bg-gradient-to-r from-purple-500/20 to-violet-500/20 text-purple-300 border-purple-500/30' 
+              portal === 'admin'
+                ? 'bg-gradient-to-r from-purple-500/20 to-violet-500/20 text-purple-300 border-purple-500/30'
                 : 'bg-gradient-to-r from-blue-500/20 to-cyan-500/20 text-blue-300 border-blue-500/30'
             }`}
             whileHover={{ scale: 1.05 }}
@@ -90,10 +88,10 @@ export default function FuturisticTopBar({ onNewOpportunity }: TopBarProps) {
             whileTap={{ scale: 0.95 }}
           >
             <Sparkles className="h-5 w-5" />
-            <div className="absolute -top-1 -right-1 w-3 h-3 bg-gradient-to-r from-purple-400 to-pink-400 rounded-full animate-pulse"></div>
+            <div className="absolute -top-1 -right-1 w-3 h-3 bg-gradient-to-r from-purple-400 to-pink-400 rounded-full animate-pulse" />
           </motion.button>
 
-          {/* Quick Actions */}
+          {/* Quick action */}
           {portal === 'partner' && (
             <motion.button
               onClick={onNewOpportunity}
@@ -115,11 +113,11 @@ export default function FuturisticTopBar({ onNewOpportunity }: TopBarProps) {
             >
               <Bell className="h-5 w-5" />
               {unreadCount > 0 && (
-                <motion.span 
+                <motion.span
                   className="absolute -top-1 -right-1 h-5 w-5 bg-gradient-to-r from-red-500 to-pink-500 text-white text-xs rounded-full flex items-center justify-center font-medium"
                   initial={{ scale: 0 }}
                   animate={{ scale: 1 }}
-                  transition={{ type: "spring", stiffness: 500, damping: 30 }}
+                  transition={{ type: 'spring', stiffness: 500, damping: 30 }}
                 >
                   {unreadCount}
                 </motion.span>
@@ -129,7 +127,7 @@ export default function FuturisticTopBar({ onNewOpportunity }: TopBarProps) {
             <AnimatePresence>
               {showNotifications && (
                 <motion.div
-                  className="absolute right-0 mt-2 w-96 bg-slate-800/95 backdrop-blur-xl rounded-xl shadow-2xl border border-slate-600/50 z-50"
+                  className="fixed right-6 top-16 w-96 bg-slate-800/95 backdrop-blur-xl rounded-xl shadow-2xl border border-slate-600/50 z-[9999]"
                   initial={{ opacity: 0, y: -10, scale: 0.95 }}
                   animate={{ opacity: 1, y: 0, scale: 1 }}
                   exit={{ opacity: 0, y: -10, scale: 0.95 }}
@@ -156,28 +154,27 @@ export default function FuturisticTopBar({ onNewOpportunity }: TopBarProps) {
                         transition={{ delay: index * 0.05 }}
                       >
                         <div className="flex items-start space-x-3">
-                          <div className={`p-2 rounded-lg ${
-                            notification.type === 'opportunity' ? 'bg-green-500/20 text-green-400' :
-                            notification.type === 'sync_error' ? 'bg-red-500/20 text-red-400' :
-                            notification.type === 'campaign' ? 'bg-blue-500/20 text-blue-400' :
-                            'bg-purple-500/20 text-purple-400'
-                          }`}>
+                          <div
+                            className={`p-2 rounded-lg ${
+                              notification.type === 'opportunity'
+                                ? 'bg-green-500/20 text-green-400'
+                                : notification.type === 'sync_error'
+                                ? 'bg-red-500/20 text-red-400'
+                                : notification.type === 'campaign'
+                                ? 'bg-blue-500/20 text-blue-400'
+                                : 'bg-purple-500/20 text-purple-400'
+                            }`}
+                          >
                             <Brain className="h-4 w-4" />
                           </div>
                           <div className="flex-1 min-w-0">
-                            <p className="text-sm font-medium text-white">
-                              {notification.title}
-                            </p>
-                            <p className="text-sm text-slate-400 mt-1">
-                              {notification.message}
-                            </p>
+                            <p className="text-sm font-medium text-white">{notification.title}</p>
+                            <p className="text-sm text-slate-400 mt-1">{notification.message}</p>
                             <p className="text-xs text-slate-500 mt-1">
                               {new Date(notification.timestamp).toLocaleTimeString()}
                             </p>
                           </div>
-                          {!notification.read && (
-                            <div className="w-2 h-2 bg-blue-400 rounded-full"></div>
-                          )}
+                          {!notification.read && <div className="w-2 h-2 bg-blue-400 rounded-full" />}
                         </div>
                       </motion.div>
                     ))}
@@ -205,15 +202,13 @@ export default function FuturisticTopBar({ onNewOpportunity }: TopBarProps) {
                   alt={user?.firstName}
                   className="h-10 w-10 rounded-xl border-2 border-slate-600/50"
                 />
-                <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-green-400 rounded-full border-2 border-slate-800"></div>
+                <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-green-400 rounded-full border-2 border-slate-800" />
               </div>
               <div className="hidden md:block text-left">
                 <div className="text-sm font-medium text-white">
                   {user?.firstName} {user?.lastName}
                 </div>
-                <div className="text-xs text-slate-400 capitalize">
-                  {user?.role} • AI Enhanced
-                </div>
+                <div className="text-xs text-slate-400 capitalize">{user?.role} • AI Enhanced</div>
               </div>
               <ChevronDown className="h-4 w-4 text-slate-400" />
             </motion.button>
@@ -221,8 +216,7 @@ export default function FuturisticTopBar({ onNewOpportunity }: TopBarProps) {
             <AnimatePresence>
               {showUserMenu && (
                 <motion.div
-                  // You can also switch this to "fixed right-6 top-16 ..." if you ever re-add overflow-hidden
-                  className="absolute right-0 mt-2 w-56 bg-slate-800/95 backdrop-blur-xl rounded-xl shadow-2xl border border-slate-600/50 z-50"
+                  className="fixed right-6 top-16 w-56 bg-slate-800/95 backdrop-blur-xl rounded-xl shadow-2xl border border-slate-600/50 z-[9999]"
                   initial={{ opacity: 0, y: -10, scale: 0.95 }}
                   animate={{ opacity: 1, y: 0, scale: 1 }}
                   exit={{ opacity: 0, y: -10, scale: 0.95 }}
@@ -241,8 +235,8 @@ export default function FuturisticTopBar({ onNewOpportunity }: TopBarProps) {
                       <Zap className="mr-3 h-4 w-4" />
                       Integrations
                     </button>
-                    <div className="border-t border-slate-700/50 my-2"></div>
-                    <button 
+                    <div className="border-t border-slate-700/50 my-2" />
+                    <button
                       onClick={handleLogout}
                       className="flex items-center w-full px-4 py-3 text-sm text-red-400 hover:bg-red-500/10 hover:text-red-300 transition-colors rounded-lg"
                     >
