@@ -323,10 +323,20 @@ export default function Campaigns() {
   const [filterStatus, setFilterStatus] = useState('all');
   const [filterType, setFilterType] = useState('all');
 
-  // NEW: live campaigns state
+  // Live campaigns state
   const [dbCampaigns, setDbCampaigns] = useState<Campaign[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [loadErr, setLoadErr] = useState<string | null>(null);
+
+  // --- Create form state ---
+  const [name, setName] = useState('');
+  const [typeVal, setTypeVal] = useState('');
+  const [startDate, setStartDate] = useState('');
+  const [endDate, setEndDate] = useState('');
+  const [budget, setBudget] = useState<string>('');
+  const [description, setDescription] = useState('');
+  const [selectedManufacturerIds, setSelectedManufacturerIds] = useState<number[]>([]);
+  const [saving, setSaving] = useState(false);
 
   // map DB row -> Campaign (UI shape)
   function mapDbToCampaign(row: any): Campaign {
@@ -351,26 +361,75 @@ export default function Campaigns() {
       targetCustomers: (row.target_customer_ids ?? []) as number[],
       targetManufacturers: (row.target_manufacturer_ids ?? []) as number[]
     };
-    // NOTE: We keep targetCustomers as numeric IDs so your existing UI works with sampleData customers
+  }
+
+  async function fetchCampaigns() {
+    setLoading(true);
+    setLoadErr(null);
+    const { data, error } = await supabase
+      .from('campaigns')
+      .select('*')
+      .order('created_at', { ascending: false });
+    if (error) {
+      setLoadErr(error.message);
+      setDbCampaigns([]);
+    } else {
+      setDbCampaigns((data ?? []).map(mapDbToCampaign));
+    }
+    setLoading(false);
   }
 
   useEffect(() => {
-    (async () => {
-      setLoading(true);
-      setLoadErr(null);
-      const { data, error } = await supabase
-        .from('campaigns')
-        .select('*')
-        .order('created_at', { ascending: false });
-      if (error) {
-        setLoadErr(error.message);
-        setDbCampaigns([]);
-      } else {
-        setDbCampaigns((data ?? []).map(mapDbToCampaign));
-      }
-      setLoading(false);
-    })();
+    fetchCampaigns();
   }, []);
+
+  async function handleCreateCampaign(e: React.FormEvent) {
+    e.preventDefault();
+    if (!name || !typeVal || !startDate || !endDate) {
+      alert('Please fill Campaign Name, Type, Start Date, End Date.');
+      return;
+    }
+    setSaving(true);
+
+    const payload = {
+      name,
+      type: typeVal,
+      status: 'draft',
+      start_date: startDate,
+      end_date: endDate,
+      budget: budget ? Number(budget) : null,
+      description: description || null,
+      metrics: {
+        customersTargeted: 0,
+        customersContacted: 0,
+        meetingsScheduled: 0,
+        opportunitiesCreated: 0,
+        revenue: 0
+      },
+      goals: [],
+      target_customer_ids: [],
+      target_manufacturer_ids: selectedManufacturerIds
+    };
+
+    const { error } = await supabase.from('campaigns').insert(payload);
+    setSaving(false);
+
+    if (error) {
+      alert(`Failed to create: ${error.message}`);
+      return;
+    }
+
+    // reset & refresh
+    setName('');
+    setTypeVal('');
+    setStartDate('');
+    setEndDate('');
+    setBudget('');
+    setDescription('');
+    setSelectedManufacturerIds([]);
+    setIsNewCampaignOpen(false);
+    fetchCampaigns();
+  }
 
   const filteredCampaigns = dbCampaigns.filter(campaign => {
     if (filterStatus !== 'all' && campaign.status !== filterStatus) return false;
@@ -432,7 +491,7 @@ export default function Campaigns() {
             : 0;
         return (
           <div className="w-24">
-            <div className="bg-gray-200 rounded-full h-2">
+            <div className="bg-gray-2 00 rounded-full h-2">
               <div className="bg-blue-600 h-2 rounded-full" style={{ width: `${progress}%` }} />
             </div>
             <p className="text-xs text-gray-600 mt-1">{Math.round(progress)}%</p>
@@ -489,7 +548,7 @@ export default function Campaigns() {
           </Card>
         )}
 
-        {/* Campaign Stats */}
+        {/* Stats */}
         {!loading && !loadErr && (
           <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
             <Card>
@@ -602,9 +661,14 @@ export default function Campaigns() {
       {/* Campaign Details Drawer */}
       <CampaignDetails campaign={selectedCampaign} isOpen={isDetailsOpen} onClose={() => setIsDetailsOpen(false)} />
 
-      {/* New Campaign Modal (UI only for now) */}
-      <Modal isOpen={isNewCampaignOpen} onClose={() => setIsNewCampaignOpen(false)} title="Create New Campaign" size="lg">
-        <form className="space-y-4">
+      {/* New Campaign Modal (wired to Supabase) */}
+      <Modal
+        isOpen={isNewCampaignOpen}
+        onClose={() => setIsNewCampaignOpen(false)}
+        title="Create New Campaign"
+        size="lg"
+      >
+        <form className="space-y-4" onSubmit={handleCreateCampaign}>
           <div className="grid grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-medium text-gray-700">Campaign Name *</label>
@@ -612,12 +676,18 @@ export default function Campaigns() {
                 type="text"
                 className="mt-1 block w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
                 placeholder="Enter campaign name"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
               />
             </div>
 
             <div>
               <label className="block text-sm font-medium text-gray-700">Campaign Type *</label>
-              <select className="mt-1 block w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
+              <select
+                className="mt-1 block w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                value={typeVal}
+                onChange={(e) => setTypeVal(e.target.value)}
+              >
                 <option value="">Select type</option>
                 <option value="university">University</option>
                 <option value="hospital">Hospital</option>
@@ -634,6 +704,8 @@ export default function Campaigns() {
               <input
                 type="date"
                 className="mt-1 block w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                value={startDate}
+                onChange={(e) => setStartDate(e.target.value)}
               />
             </div>
 
@@ -642,6 +714,8 @@ export default function Campaigns() {
               <input
                 type="date"
                 className="mt-1 block w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                value={endDate}
+                onChange={(e) => setEndDate(e.target.value)}
               />
             </div>
           </div>
@@ -649,10 +723,19 @@ export default function Campaigns() {
           <div>
             <label className="block text-sm font-medium text-gray-700">Target Manufacturers</label>
             <div className="mt-2 space-y-2">
-              {manufacturers.map(manufacturer => (
-                <label key={manufacturer.id} className="inline-flex items-center mr-6">
-                  <input type="checkbox" className="form-checkbox h-4 w-4 text-blue-600" />
-                  <span className="ml-2 text-sm text-gray-700">{manufacturer.name}</span>
+              {manufacturers.map((m) => (
+                <label key={m.id} className="inline-flex items-center mr-6">
+                  <input
+                    type="checkbox"
+                    className="form-checkbox h-4 w-4 text-blue-600"
+                    checked={selectedManufacturerIds.includes(m.id)}
+                    onChange={(e) => {
+                      setSelectedManufacturerIds((prev) =>
+                        e.target.checked ? [...prev, m.id] : prev.filter((id) => id !== m.id)
+                      );
+                    }}
+                  />
+                  <span className="ml-2 text-sm text-gray-700">{m.name}</span>
                 </label>
               ))}
             </div>
@@ -664,6 +747,9 @@ export default function Campaigns() {
               type="number"
               className="mt-1 block w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
               placeholder="0"
+              value={budget}
+              onChange={(e) => setBudget(e.target.value)}
+              min="0"
             />
           </div>
 
@@ -673,6 +759,8 @@ export default function Campaigns() {
               rows={3}
               className="mt-1 block w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
               placeholder="Describe the campaign objectives and strategy..."
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
             />
           </div>
 
@@ -681,14 +769,23 @@ export default function Campaigns() {
               type="button"
               onClick={() => setIsNewCampaignOpen(false)}
               className="px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50"
+              disabled={saving}
             >
               Cancel
             </button>
-            <button type="button" className="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg text-sm font-medium hover:bg-gray-300">
+            <button
+              type="button"
+              className="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg text-sm font-medium hover:bg-gray-300"
+              disabled={saving}
+            >
               Save as Draft
             </button>
-            <button type="submit" className="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700">
-              Create Campaign
+            <button
+              type="submit"
+              className="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 disabled:opacity-60"
+              disabled={saving}
+            >
+              {saving ? 'Creating…' : 'Create Campaign'}
             </button>
           </div>
         </form>
