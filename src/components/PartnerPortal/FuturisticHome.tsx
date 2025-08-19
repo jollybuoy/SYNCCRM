@@ -1,3 +1,4 @@
+// SYNCCRM/src/components/PartnerPortal/FuturisticHome.tsx
 import React from 'react';
 import { motion } from 'framer-motion';
 import { 
@@ -59,7 +60,7 @@ const AIInsightCard = ({ title, description, confidence, type, delay = 0 }: any)
               <div 
                 className="bg-gradient-to-r from-blue-400 to-purple-400 h-2 rounded-full"
                 style={{ width: `${confidence}%` }}
-              ></div>
+              />
             </div>
             <span className="text-xs text-slate-400">{confidence}% confidence</span>
           </div>
@@ -81,37 +82,17 @@ export default function FuturisticHome() {
   const syncHealthy = manufacturers.filter(m => m.status === 'connected').length;
 
   const aiInsights = [
-    {
-      title: "High-Value Prospect Identified",
-      description: "MIT shows 87% similarity to your top closed deals. Immediate follow-up recommended.",
-      confidence: 92,
-      type: "opportunity"
-    },
-    {
-      title: "Deal Velocity Alert",
-      description: "Johns Hopkins opportunity stagnant for 45 days. Risk of loss increasing.",
-      confidence: 78,
-      type: "risk"
-    },
-    {
-      title: "Optimal Contact Window",
-      description: "University contacts respond 3x better on Tuesday-Thursday, 10-11 AM.",
-      confidence: 85,
-      type: "insight"
-    },
-    {
-      title: "Revenue Forecast Update",
-      description: "Q2 forecast adjusted to $12.4M based on current pipeline velocity.",
-      confidence: 91,
-      type: "prediction"
-    }
+    { title: "High-Value Prospect Identified", description: "MIT shows 87% similarity to your top closed deals. Immediate follow-up recommended.", confidence: 92, type: "opportunity" },
+    { title: "Deal Velocity Alert", description: "Johns Hopkins opportunity stagnant for 45 days. Risk of loss increasing.", confidence: 78, type: "risk" },
+    { title: "Optimal Contact Window", description: "University contacts respond 3x better on Tuesday-Thursday, 10-11 AM.", confidence: 85, type: "insight" },
+    { title: "Revenue Forecast Update", description: "Q2 forecast adjusted to $12.4M based on current pipeline velocity.", confidence: 91, type: "prediction" }
   ];
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 p-6">
       {/* Hero Section */}
       <motion.div
-        className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 p-8 mb-8 text-white"
+        className="relative z-0 overflow-hidden rounded-3xl bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 p-8 mb-8 text-white"
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 0.7 }}
@@ -155,8 +136,10 @@ export default function FuturisticHome() {
               </div>
             </motion.div>
           </div>
+
+          {/* Decorative brain — make it non-interactive */}
           <motion.div
-            className="hidden lg:block"
+            className="hidden lg:block pointer-events-none"
             initial={{ opacity: 0, scale: 0.8 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ delay: 0.5 }}
@@ -166,53 +149,22 @@ export default function FuturisticHome() {
             </div>
           </motion.div>
         </div>
-        <div className="absolute -bottom-8 -right-8 w-32 h-32 bg-white/5 rounded-full"></div>
-        <div className="absolute -top-8 -left-8 w-24 h-24 bg-white/5 rounded-full"></div>
+
+        {/* Decorative circles — also non-interactive */}
+        <div className="absolute -bottom-8 -right-8 w-32 h-32 bg-white/5 rounded-full pointer-events-none"></div>
+        <div className="absolute -top-8 -left-8 w-24 h-24 bg-white/5 rounded-full pointer-events-none"></div>
       </motion.div>
 
       {/* KPI Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-        <StatCard
-          title="AI Pipeline Forecast"
-          value={`$${(totalForecast / 1000000).toFixed(1)}M`}
-          change="+18% vs last quarter"
-          icon={TrendingUp}
-          gradient="from-blue-500 to-cyan-500"
-          delay={0.1}
-        />
-        <StatCard
-          title="Smart Opportunities"
-          value={openOpportunities}
-          change="12 high-probability deals"
-          icon={Target}
-          gradient="from-green-500 to-emerald-500"
-          delay={0.2}
-        />
-        <StatCard
-          title="AI Win Rate"
-          value="73.2%"
-          change="+5.8% improvement"
-          icon={Sparkles}
-          gradient="from-purple-500 to-violet-500"
-          delay={0.3}
-        />
-        <StatCard
-          title="Active Campaigns"
-          value={activeCampaigns}
-          change="2.4K contacts engaged"
-          icon={Users}
-          gradient="from-orange-500 to-red-500"
-          delay={0.4}
-        />
+        <StatCard title="AI Pipeline Forecast" value={`$${(totalForecast / 1000000).toFixed(1)}M`} change="+18% vs last quarter" icon={TrendingUp} gradient="from-blue-500 to-cyan-500" delay={0.1} />
+        <StatCard title="Smart Opportunities" value={openOpportunities} change="12 high-probability deals" icon={Target} gradient="from-green-500 to-emerald-500" delay={0.2} />
+        <StatCard title="AI Win Rate" value="73.2%" change="+5.8% improvement" icon={Sparkles} gradient="from-purple-500 to-violet-500" delay={0.3} />
+        <StatCard title="Active Campaigns" value={activeCampaigns} change="2.4K contacts engaged" icon={Users} gradient="from-orange-500 to-red-500" delay={0.4} />
       </div>
 
       {/* AI Insights Section */}
-      <motion.div
-        className="mb-8"
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.5 }}
-      >
+      <motion.div className="mb-8" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.5 }}>
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center space-x-3">
             <div className="p-3 bg-gradient-to-r from-purple-500 to-pink-500 rounded-xl">
@@ -231,22 +183,13 @@ export default function FuturisticHome() {
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {aiInsights.map((insight, index) => (
-            <AIInsightCard
-              key={index}
-              {...insight}
-              delay={0.6 + index * 0.1}
-            />
+            <AIInsightCard key={index} {...insight} delay={0.6 + index * 0.1} />
           ))}
         </div>
       </motion.div>
 
       {/* Manufacturer Status Grid */}
-      <motion.div
-        className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8"
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.8 }}
-      >
+      <motion.div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.8 }}>
         {/* Manufacturer Sync Status */}
         <div className="bg-slate-800/50 backdrop-blur-xl rounded-2xl p-6 border border-slate-700/50">
           <div className="flex items-center justify-between mb-6">
@@ -276,7 +219,7 @@ export default function FuturisticHome() {
                   <div className={`w-3 h-3 rounded-full ${
                     manufacturer.status === 'connected' ? 'bg-green-400 animate-pulse' :
                     manufacturer.status === 'syncing' ? 'bg-yellow-400 animate-pulse' : 'bg-red-400'
-                  }`}></div>
+                  }`} />
                   <div className={`px-3 py-1 rounded-lg text-xs font-medium ${
                     manufacturer.status === 'connected' ? 'bg-green-500/20 text-green-400' :
                     manufacturer.status === 'syncing' ? 'bg-yellow-500/20 text-yellow-400' : 
@@ -300,7 +243,7 @@ export default function FuturisticHome() {
           <div className="flex items-center justify-between mb-6">
             <h3 className="text-xl font-bold text-white">Live Activity Stream</h3>
             <div className="flex items-center space-x-2">
-              <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
+              <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse" />
               <span className="text-green-400 text-sm">Live</span>
             </div>
           </div>
@@ -333,12 +276,7 @@ export default function FuturisticHome() {
       </motion.div>
 
       {/* Quick Actions */}
-      <motion.div
-        className="grid grid-cols-1 md:grid-cols-3 gap-6"
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 1.2 }}
-      >
+      <motion.div className="grid grid-cols-1 md:grid-cols-3 gap-6" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 1.2 }}>
         <button className="p-6 bg-gradient-to-r from-blue-500/20 to-cyan-500/20 border border-blue-500/30 rounded-2xl text-left hover:from-blue-500/30 hover:to-cyan-500/30 transition-all group">
           <div className="flex items-center justify-between mb-4">
             <div className="p-3 bg-blue-500/20 rounded-xl group-hover:bg-blue-500/30 transition-all">
