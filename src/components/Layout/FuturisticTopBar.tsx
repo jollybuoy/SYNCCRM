@@ -1,31 +1,37 @@
+// src/components/Layout/FuturisticTopBar.tsx
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   Search, Plus, Bell, ChevronDown, LogOut, User, Settings, 
-  Zap, Brain, Globe, Shield, Command, Sparkles, Eye, Filter
+  Zap, Brain, Globe, Shield, Command, Sparkles, Eye
 } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 import { notifications } from '../../data/sampleData';
+import { useNavigate } from 'react-router-dom';
 
 interface TopBarProps {
   onNewOpportunity?: () => void;
 }
 
 export default function FuturisticTopBar({ onNewOpportunity }: TopBarProps) {
-  const { user, logout, portal } = useAuth();
+  const { user, portal } = useAuth();
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [showNotifications, setShowNotifications] = useState(false);
   const [showAIAssistant, setShowAIAssistant] = useState(false);
+  const navigate = useNavigate();
   
   const unreadCount = notifications.filter(n => !n.read).length;
 
   const handleLogout = () => {
-    logout();
+    setShowUserMenu(false);
+    // Use the /logout route which calls context.logout() and redirects to /login
+    navigate('/logout');
   };
 
   return (
     <motion.div 
-      className="bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 border-b border-slate-700/50 px-6 py-4 relative overflow-hidden"
+      // ⛏️ removed "overflow-hidden" so the dropdown isn't clipped
+      className="bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 border-b border-slate-700/50 px-6 py-4 relative"
       initial={{ y: -100, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
       transition={{ duration: 0.5 }}
@@ -215,6 +221,7 @@ export default function FuturisticTopBar({ onNewOpportunity }: TopBarProps) {
             <AnimatePresence>
               {showUserMenu && (
                 <motion.div
+                  // You can also switch this to "fixed right-6 top-16 ..." if you ever re-add overflow-hidden
                   className="absolute right-0 mt-2 w-56 bg-slate-800/95 backdrop-blur-xl rounded-xl shadow-2xl border border-slate-600/50 z-50"
                   initial={{ opacity: 0, y: -10, scale: 0.95 }}
                   animate={{ opacity: 1, y: 0, scale: 1 }}
