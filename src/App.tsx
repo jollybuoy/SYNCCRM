@@ -1,16 +1,22 @@
 // SYNCCRM/src/App.tsx
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import LoginPage from './components/Auth/LoginPage';
 import PartnerPortal from './components/PartnerPortal/PartnerPortal';
 import AdminPortal from './components/AdminPortal/AdminPortal';
-import LogoutPage from './components/Auth/LogoutPage'; // ✅ new import
-import SupabasePing from './SupabasePing'; // ✅ new import
+import LogoutPage from './components/Auth/LogoutPage';
+import SupabasePing from './SupabasePing'; // ✅ import
 
 function AppContent() {
   const { user, portal, isLoading } = useAuth();
+  const location = useLocation();
+
+  // ✅ allow /ping without auth
+  if (location.pathname === '/ping') {
+    return <SupabasePing />;
+  }
 
   if (isLoading) {
     return (
@@ -29,16 +35,8 @@ function AppContent() {
 
   return (
     <Routes>
-      {/* ✅ Supabase ping test route */}
-      <Route path="/ping" element={<SupabasePing />} />
-
-      {/* ✅ logout route added */}
       <Route path="/logout" element={<LogoutPage />} />
-
-      <Route 
-        path="/*" 
-        element={portal === 'admin' ? <AdminPortal /> : <PartnerPortal />} 
-      />
+      <Route path="/*" element={portal === 'admin' ? <AdminPortal /> : <PartnerPortal />} />
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   );
@@ -50,28 +48,13 @@ function App() {
       <Router>
         <div className="App">
           <AppContent />
-          <Toaster 
+          <Toaster
             position="top-right"
             toastOptions={{
               duration: 4000,
-              style: {
-                background: '#363636',
-                color: '#fff',
-              },
-              success: {
-                duration: 3000,
-                iconTheme: {
-                  primary: '#10B981',
-                  secondary: '#fff',
-                },
-              },
-              error: {
-                duration: 5000,
-                iconTheme: {
-                  primary: '#EF4444',
-                  secondary: '#fff',
-                },
-              },
+              style: { background: '#363636', color: '#fff' },
+              success: { duration: 3000, iconTheme: { primary: '#10B981', secondary: '#fff' } },
+              error: { duration: 5000, iconTheme: { primary: '#EF4444', secondary: '#fff' } },
             }}
           />
         </div>
