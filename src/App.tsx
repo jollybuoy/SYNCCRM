@@ -7,6 +7,7 @@ import LoginPage from './components/Auth/LoginPage';
 import PartnerPortal from './components/PartnerPortal/PartnerPortal';
 import AdminPortal from './components/AdminPortal/AdminPortal';
 import LogoutPage from './components/Auth/LogoutPage'; // ✅ new import
+import SupabasePing from './SupabasePing'; // ✅ new import
 
 function AppContent() {
   const { user, portal, isLoading } = useAuth();
@@ -28,6 +29,9 @@ function AppContent() {
 
   return (
     <Routes>
+      {/* ✅ Supabase ping test route */}
+      <Route path="/ping" element={<SupabasePing />} />
+
       {/* ✅ logout route added */}
       <Route path="/logout" element={<LogoutPage />} />
 
