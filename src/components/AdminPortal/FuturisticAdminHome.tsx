@@ -1,3 +1,4 @@
+// src/components/AdminPortal/FuturisticAdminHome.tsx
 import React from 'react';
 import { motion } from 'framer-motion';
 import { 
@@ -75,41 +76,17 @@ export default function FuturisticAdminHome() {
   const syncSuccessRate = ((syncLogs.filter(log => log.status === 'success').length / syncLogs.length) * 100).toFixed(1);
 
   const systemMetrics = [
-    {
-      title: "AI Processing Power",
-      description: "Neural network computation capacity utilization",
-      value: "94.7%",
-      trend: 12,
-      icon: Brain
-    },
-    {
-      title: "Data Throughput",
-      description: "Real-time data processing and synchronization rate",
-      value: "2.4TB/h",
-      trend: 8,
-      icon: Database
-    },
-    {
-      title: "Network Latency",
-      description: "Global edge network response time optimization",
-      value: "12ms",
-      trend: -15,
-      icon: Network
-    },
-    {
-      title: "Security Score",
-      description: "Quantum encryption and threat detection status",
-      value: "99.9%",
-      trend: 2,
-      icon: Shield
-    }
+    { title: "AI Processing Power", description: "Neural network computation capacity utilization", value: "94.7%", trend: 12, icon: Brain },
+    { title: "Data Throughput", description: "Real-time data processing and synchronization rate", value: "2.4TB/h", trend: 8, icon: Database },
+    { title: "Network Latency", description: "Global edge network response time optimization", value: "12ms", trend: -15, icon: Network },
+    { title: "Security Score", description: "Quantum encryption and threat detection status", value: "99.9%", trend: 2, icon: Shield }
   ];
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 p-6">
       {/* Hero Section */}
       <motion.div
-        className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-purple-600 via-pink-600 to-red-600 p-8 mb-8 text-white"
+        className="relative z-0 overflow-hidden rounded-3xl bg-gradient-to-r from-purple-600 via-pink-600 to-red-600 p-8 mb-8 text-white"
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 0.7 }}
@@ -153,8 +130,9 @@ export default function FuturisticAdminHome() {
               </div>
             </motion.div>
           </div>
+          {/* Decorative shield — make non-interactive */}
           <motion.div
-            className="hidden lg:block"
+            className="hidden lg:block pointer-events-none"
             initial={{ opacity: 0, scale: 0.8 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ delay: 0.5 }}
@@ -164,57 +142,21 @@ export default function FuturisticAdminHome() {
             </div>
           </motion.div>
         </div>
-        <div className="absolute -bottom-8 -right-8 w-32 h-32 bg-white/5 rounded-full"></div>
-        <div className="absolute -top-8 -left-8 w-24 h-24 bg-white/5 rounded-full"></div>
+        {/* Decorative circles — non-interactive */}
+        <div className="absolute -bottom-8 -right-8 w-32 h-32 bg-white/5 rounded-full pointer-events-none"></div>
+        <div className="absolute -top-8 -left-8 w-24 h-24 bg-white/5 rounded-full pointer-events-none"></div>
       </motion.div>
 
       {/* System Status KPIs */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-        <AdminStatCard
-          title="Active Integrations"
-          value={activeIntegrations}
-          change={`${manufacturers.length} manufacturers connected`}
-          icon={Zap}
-          gradient="from-purple-500 to-violet-500"
-          delay={0.1}
-          status="healthy"
-        />
-        <AdminStatCard
-          title="API Throughput"
-          value={`${(totalApiCalls / 1000).toFixed(1)}K`}
-          change="+23% vs yesterday"
-          icon={Activity}
-          gradient="from-blue-500 to-cyan-500"
-          delay={0.2}
-          status="healthy"
-        />
-        <AdminStatCard
-          title="Sync Success Rate"
-          value={`${syncSuccessRate}%`}
-          change={`${errorCount} errors detected`}
-          icon={CheckCircle}
-          gradient="from-green-500 to-emerald-500"
-          delay={0.3}
-          status={errorCount > 5 ? "warning" : "healthy"}
-        />
-        <AdminStatCard
-          title="AI Engine Load"
-          value="94.7%"
-          change="Optimal performance"
-          icon={Cpu}
-          gradient="from-orange-500 to-red-500"
-          delay={0.4}
-          status="healthy"
-        />
+        <AdminStatCard title="Active Integrations" value={activeIntegrations} change={`${manufacturers.length} manufacturers connected`} icon={Zap} gradient="from-purple-500 to-violet-500" delay={0.1} status="healthy" />
+        <AdminStatCard title="API Throughput" value={`${(totalApiCalls / 1000).toFixed(1)}K`} change="+23% vs yesterday" icon={Activity} gradient="from-blue-500 to-cyan-500" delay={0.2} status="healthy" />
+        <AdminStatCard title="Sync Success Rate" value={`${syncSuccessRate}%`} change={`${errorCount} errors detected`} icon={CheckCircle} gradient="from-green-500 to-emerald-500" delay={0.3} status={errorCount > 5 ? "warning" : "healthy"} />
+        <AdminStatCard title="AI Engine Load" value="94.7%" change="Optimal performance" icon={Cpu} gradient="from-orange-500 to-red-500" delay={0.4} status="healthy" />
       </div>
 
       {/* System Metrics Grid */}
-      <motion.div
-        className="mb-8"
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.5 }}
-      >
+      <motion.div className="mb-8" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.5 }}>
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center space-x-3">
             <div className="p-3 bg-gradient-to-r from-purple-500 to-pink-500 rounded-xl">
@@ -233,22 +175,13 @@ export default function FuturisticAdminHome() {
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {systemMetrics.map((metric, index) => (
-            <SystemMetricCard
-              key={index}
-              {...metric}
-              delay={0.6 + index * 0.1}
-            />
+            <SystemMetricCard key={index} {...metric} delay={0.6 + index * 0.1} />
           ))}
         </div>
       </motion.div>
 
       {/* Integration Status and Activity Feed */}
-      <motion.div
-        className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8"
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.8 }}
-      >
+      <motion.div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.8 }}>
         {/* Integration Health */}
         <div className="bg-slate-800/50 backdrop-blur-xl rounded-2xl p-6 border border-slate-700/50">
           <div className="flex items-center justify-between mb-6">
@@ -333,12 +266,7 @@ export default function FuturisticAdminHome() {
       </motion.div>
 
       {/* Quick Admin Actions */}
-      <motion.div
-        className="grid grid-cols-1 md:grid-cols-3 gap-6"
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 1.2 }}
-      >
+      <motion.div className="grid grid-cols-1 md:grid-cols-3 gap-6" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 1.2 }}>
         <button className="p-6 bg-gradient-to-r from-purple-500/20 to-violet-500/20 border border-purple-500/30 rounded-2xl text-left hover:from-purple-500/30 hover:to-violet-500/30 transition-all group">
           <div className="flex items-center justify-between mb-4">
             <div className="p-3 bg-purple-500/20 rounded-xl group-hover:bg-purple-500/30 transition-all">
